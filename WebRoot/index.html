@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>requirejs 演示</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/base.css">
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+<body>
+
+		<div class="container">
+		    <divs>
+				<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  				  <a class="navbar-brand" href="#">
+				    <img src="./images/logo.jpg" width="30" height="30" alt="">
+				          编译器
+				  </a>
+				  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+				    <ul class="navbar-nav mr-auto">
+   				      <li class="nav-item dropdown">
+				        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				          	文件
+				        </a>
+				        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+				          <a class="dropdown-item" href="#">
+				           	<div class="open-file"> 
+				           	    打开
+				           		<input type="file" onchange="file.readFiles(this.files)" />
+				           	</div>
+				          </a>
+				          <a class="dropdown-item" href="#">保存</a>
+				          <a class="dropdown-item" href="#">另存为</a>
+				          <div class="dropdown-divider"></div>
+				          <a class="dropdown-item" href="#">退出</a>
+				        </div>
+				      </li>
+				      <li class="nav-item dropdown active">
+				        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				          	词法分析
+				        </a>
+				        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+				          <a class="dropdown-item" href="#">手工生成过程演示</a>
+				          <a class="dropdown-item" href="#">自动生成算法演示</a>
+				        </div>
+				      </li>
+				      <li class="nav-item">
+				        <a class="nav-link" href="#">语法分析</a>
+				      </li>
+			          <li class="nav-item">
+				        <a class="nav-link" href="#">中间代码生成</a>
+				      </li>
+				      <li class="nav-item">
+				        <a class="nav-link" href="#">目标代码生成</a>
+				      </li>
+				    </ul>
+				  </div>
+				</nav>
+		    </div>
+
+		    <div class="mt30">
+				<div class="container">
+				  <div class="row">
+				    <div class="col">
+						<div class="card border-secondary mb-3" style="max-width: 35rem; height: 25rem;">
+						  <div class="card-header">源程序</div>
+						  <div class="card-body text-secondary">
+						    <h5 class="card-title">Java 代码</h5>
+					        <p class="card-text overflow-y" id="source-code"></p>
+						  </div>
+						</div>
+				    </div>
+				    <div class="col">
+						<div class="card border-success mb-3" style="max-width: 35rem; height: 25rem">
+						  <div class="card-header">中间代码</div>
+						  <div class="card-body text-success">
+						    <h5 class="card-title">Success card title</h5>
+						    <p class="card-text overflow-y">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+				    </div>
+				  </div>
+				  <div class="row">
+				    <div class="col">
+						<div class="card border-danger mb-3" style="max-width: 35rem; height: 25rem">
+						  <div class="card-header">目标代码</div>
+						  <div class="card-body text-danger">
+						    <h5 class="card-title">Danger card title</h5>
+						    <p class="card-text overflow-y" >Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+				    </div>
+				    <div class="col">
+						<div class="card border-warning mb-3" style="max-width: 35rem; height: 25rem">
+						  <div class="card-header">代码</div>
+						  <div class="card-body text-warning">
+						    <h5 class="card-title">Warning card title</h5>
+						    <p class="card-text overflow-y">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						  </div>
+						</div>
+				    </div>
+				  </div>
+				</div>
+		    </div>
+		</div>
+
+	<script data-main="js/app" src="js/lib/require.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,24 @@
+.overflow-y {
+	 height: 18rem; 
+	 overflow-y: auto;
+}
+
+/*文件上传*/
+.open-file {
+    position: relative;
+    width:74px;
+    height:32px;
+    line-height: 35px;
+    overflow: hidden;
+    cursor:pointer;
+}
+.open-file input{
+    position: absolute;
+    width:200px;
+    height:35px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: 'alpha(opacity=0)';
+}
