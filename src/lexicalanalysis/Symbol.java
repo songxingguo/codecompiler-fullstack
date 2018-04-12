@@ -15,7 +15,7 @@ package lexicalanalysis;
  */
 public class Symbol {
 
-	private String name;
+	private Name name = new Name();
 	
 	private int token;
 	
@@ -27,20 +27,16 @@ public class Symbol {
 	
 	private String addr;
 	
-	public Symbol(String name) {
-		this.name = name;
-	}
-	
-	public Symbol(String name, int token) {
-		this.name = name;
+	public Symbol(String word, int token) {
+		this.name.word = word;
 		this.token = token;
 	}
-
-	public String getName() {
+	
+	public Name getName() {
 		return name;
 	}
-
-	public void setName(String name) {
+	
+	public void setName(Name name) {
 		this.name = name;
 	}
 
@@ -82,5 +78,27 @@ public class Symbol {
 
 	public void setAddr(String addr) {
 		this.addr = addr;
+	}
+	
+	class Name {
+		private String word;
+		
+		private int length;
+
+		public String getWord() {
+			return word;
+		}
+
+		public void setWord(String word) {
+			this.word = word;
+		}
+
+		public int getLength() {
+			return length;
+		}
+
+		public void setLength(int length) {
+			this.length = length;
+		}
 	}
 }

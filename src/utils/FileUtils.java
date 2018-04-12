@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 /**
  * <p>Title: </p>
@@ -92,5 +93,20 @@ public class FileUtils {
             e.printStackTrace();
 		}
 		return lineStr;
+	}
+	
+	public static <E> void writeToFile(List<E> list) {
+		for(int i = 0;i<array.size();i++) {
+            Goods g =  array.get(i);
+             File file = new File("d://goodsInfo.txt");
+              FileOutputStream fos1 = new FileOutputStream(file, true);
+                // 创建FileOutputStream对应的PrintStream，方便操作。PrintStream的写入接口更便利
+                PrintStream out1 = new PrintStream(fos1);
+                String str=""+g.getName()+","+g.getBarcode()+","+g.getPrice()+"\r\n";
+                out1.print(str);
+                out1.close();
+        }
+		
+		
 	}
 }

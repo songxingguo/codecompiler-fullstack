@@ -10,10 +10,12 @@ package lexicalanalysis;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
-
-import javax.mail.internet.HeaderTokenizer.Token;
 
 import utils.Constant;
 
@@ -33,9 +35,11 @@ public class Lexer {
 	private int cols = 0; 
 	
 	//标识符
-    public static List<Symbol> symbols = null;
+    public static List<Symbol> symbols = new ArrayList<Symbol>();
     
-    public List<Token> tokens = null;
+    public List<Token> tokens = new ArrayList<Token>();
+    
+    public List<Entry> entrys = new ArrayList<Entry>();
 	
 	/**
 	 * 
@@ -48,7 +52,7 @@ public class Lexer {
 	public void scanner() {
 		try {
             String encoding = "UTF-8";
-            File file = new File("Lexical.java");
+            File file = new File("testData.txt");
             if (file.isFile() && file.exists()) { // 判断文件是否存在
                 InputStreamReader read = new InputStreamReader(
                         new FileInputStream(file), encoding);// 考虑到编码格式
@@ -95,10 +99,10 @@ public class Lexer {
 			recogDig(ch);
 		} else if (ch == '/') {
 			//处理注释
-			handCom();
-		} else if (isDelimeter(ch)) {
+			handCom(ch);
+		} else if (isDelimeter(String.valueOf(ch))) {
 			//识别定界符
-			recogDel();
+			recogDel(ch);
 		} else if (ch == '\"') {
 			//识别字符常数
 			recogStr();
@@ -142,8 +146,13 @@ public class Lexer {
 	 * @return: boolean   
 	 * @throws
 	 */
-	private boolean isDelimeter(char ch) {
-		return Constant.LIMITERWORD.indexOf(ch) > 0;
+	private boolean isDelimeter(String str) {
+		for (String word : Constant.LIMITERWORD) {
+			if (word == str) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -168,6 +177,14 @@ public class Lexer {
 		return ch;
 	}
 	
+//	private char getChar() { 
+//		if (cols > buffer.length()) {
+//			return Constant.EMPTY_CHAR;
+//		}
+//
+//		return buffer.charAt(cols);
+//	}
+	
 	/**
 	 * @Title: recogId
 	 * @Description: 识别标识符
@@ -188,13 +205,15 @@ public class Lexer {
 		
 		int token = -1;
 		if ((token = isKeyword(str)) > 0) {
+			insToken(str, token);
 			printInfo(str, "关键字", token);
 		} 
 		else {
 			if ((token = isExistSym(str)) > 0) {
-				printInfo(str, "标志符", token);
+				printInfo(str, "标志符", token);	
 			} else {
-				printInfo(str, "标志符", insertSym(str));
+				insToken(str, token);
+				printInfo(str, "标志符", insertSym(str, TokenGenerator.getLastToken()));
 			}
 		}
 	}
@@ -208,15 +227,8 @@ public class Lexer {
      * @return: int   
      * @throws
      */
-    public int isKeyword(String str) {
-    	int token = -1;
-    	for (int i = 0; i < Constant.KEYWORDS.length; i++) {
-    		if (Constant.KEYWORDS[i] == str) {
-    			token = i + 1;
-    			break;
-    		}
-    	}
-    	return token;
+    private int isKeyword(String str) {
+    	return getToken(TokenGenerator.keywords, str);
     }
     
     /**
@@ -232,25 +244,110 @@ public class Lexer {
     	if (symbols == null) return -1;
     	
     	for (Symbol sym : symbols) {
-    		if (sym.getName().equals(str)) {
+    		if (sym.getName().getWord().equals(str)) {
     			return sym.getToken();
     		}
     	}
+    	
     	return -1;
     }
     
     /**
      * 
      * @Title: insertSym
-     * @Description: 填入符号表
+     * @Description: 向 token字表中填入内容
      * @param: @param str
      * @param: @param token
      * @param: @return
      * @return: int   
      * @throws
      */
-    private int insertSym(String str) {
-    	return new Symbol(str).getToken();
+    private int insertSym(String word, int token) {
+    	Symbol symbol = new Symbol(word, token);
+    	symbols.add(symbol);
+    	return symbol.getToken();
+    }
+    
+    /**
+     * 
+     * @Title: writeSym
+     * @Description: 将符号表的内容写到文件中
+     * @param: 
+     * @return: void   
+     * @throws
+     */
+    private void writeSym() {
+		String fileName = "symbolTable.txt";
+		for (Symbol sym : symbols) {
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(new File(fileName), true);
+				PrintStream out = new PrintStream(fos);
+				String str = "" + sym.getName().getWord() + "   " + sym.getToken() + "\r\n";
+				out.print(str);
+				out.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+    }
+    
+    /**
+     * 
+     * @Title: insToken
+     * @Description: 将 token字表的内容写到文件中
+     * @param: @param str
+     * @param: @return
+     * @return: int   
+     * @throws
+     */
+    private void insToken(String word, int token) {
+    	Token to = new Token(word, token);
+    	tokens.add(to);
+    }
+    
+    /**
+     * 
+     * @Title: writeToken
+     * @Description: TODO
+     * @param: @return
+     * @return: int   
+     * @throws
+     */
+    private void writeToken() {
+		String fileName = "tokenTable.txt";
+		for (Token token : tokens) {
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(new File(fileName), true);
+				PrintStream out = new PrintStream(fos);
+				String str = "" + token.getWord() + "   " + token.getToken() + "\r\n";
+				out.print(str);
+				out.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+    }
+    
+    /**
+     * 
+     * @Title: getToken
+     * @Description: 获取对应字符的token值
+     * @param: @param entryList
+     * @param: @param str
+     * @param: @return
+     * @return: int   
+     * @throws
+     */
+    private int getToken(List<Entry> entryList, String str) {
+		for (Entry e : entryList) {
+			if (e.getWord().equals(str)) {
+				return  e.getToken();
+			}
+		}
+		
+		return -1;
     }
 
 	/**
@@ -271,8 +368,13 @@ public class Lexer {
 		//列计数器回退一个
 		cols--;
 		
-		int token = 0;
-		printInfo(str, "常数", token);
+		if (str.indexOf(".") > 0) {
+			printInfo(str, "小数", getToken(TokenGenerator.constant, "decimalType"));
+		} else if (str.indexOf("E") > 0){
+			printInfo(str, "科学计数", getToken(TokenGenerator.constant, str));
+		} else {
+			printInfo(str, "常数", getToken(TokenGenerator.constant, "intType"));
+		}
 	}
 
 	/**
@@ -294,9 +396,25 @@ public class Lexer {
 	 * @return: void   
 	 * @throws
 	 */
-	private static void handCom() {
-		// TODO Auto-generated method stub
-		
+	private void handCom(char ch) {
+		String str = "";
+		str += String.valueOf(ch);
+		//注释
+		if ((ch = getChar()) == '*') {
+			int length = str.length();
+			while (length >= 2 && str.substring(length - 2, length - 1) == "*/") {
+				str += String.valueOf(ch);
+				ch = getChar();
+			}
+			
+			int token = 0;
+			printInfo(str, "注释", token);
+		} else {
+			//列计数器回退一个
+			cols--;
+			int token = 0;
+			printInfo(str, "/", token);
+		}
 	}
 
 	/**
@@ -306,9 +424,16 @@ public class Lexer {
 	 * @return: void   
 	 * @throws
 	 */
-	private static void recogDel() {
-		// TODO Auto-generated method stub
-		
+	private void recogDel(char ch) {
+		String str = "";
+		str += String.valueOf(ch);
+		str += String.valueOf(getChar());
+		if (isDelimeter(str)) {
+			printInfo(str, "双界符", getToken(TokenGenerator.limiterword, str));
+		} else {
+			cols--;
+			printInfo(str, "界符", getToken(TokenGenerator.limiterword, str));
+		}
 	}
 	
 	/**
@@ -321,7 +446,7 @@ public class Lexer {
 	 * @throws
 	 */
 	private void printInfo(String name, String type, int token) {
-		System.out.println("{name: " + name +", type: " + type + ", token: " + token + "}");
+		System.out.println("{" + name +", " + type + ", " + token + "}");
 	}
 	
 	/**
@@ -339,5 +464,7 @@ public class Lexer {
 	public static void main(String[] args) {
 		Lexer lexer = new Lexer();
 		lexer.scanner();
+		lexer.writeSym();
+		lexer.writeToken();
 	}
 }
