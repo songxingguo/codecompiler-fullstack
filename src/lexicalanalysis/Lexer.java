@@ -61,10 +61,10 @@ public class Lexer {
                 String str = null;
     			while ((str = bufferedReader.readLine()) != null) {
     				lines++;
+    				buffer = str;
     				cols = 0;
-    	            buffer = str;
-
-    		        while (buffer != null) {
+    	          
+    		        while (!isEnding()) {
 //    		        	printPosition();
         	            //首字符决定单词的处理
     		        	sort(getChar());
@@ -163,27 +163,40 @@ public class Lexer {
 	 * @return: boolean   
 	 * @throws
 	 */
-	private char getChar() {
-		char ch = Constant.EMPTY_CHAR;
-		cols++;
-		
-		if (buffer.length() > 0) {
-	    	ch = buffer.charAt(0);
-	    	buffer = buffer.substring(1);
-		} else {
-			buffer = null;
+//	private char getChar() {
+//		char ch = Constant.EMPTY_CHAR;
+//		cols++;
+//		
+//		if (buffer.length() > 0) {
+//	    	ch = buffer.charAt(0);
+//	    	buffer = buffer.substring(1);
+//		} else {
+//			buffer = null;
+//		}
+//		
+//		return ch;
+//	}
+	
+	private char getChar() { 
+		if (isEnding()) {
+			return Constant.EMPTY_CHAR;
 		}
+		
+		char ch = buffer.charAt(cols);
+		cols++;
 		
 		return ch;
 	}
 	
-//	private char getChar() { 
-//		if (cols > buffer.length()) {
-//			return Constant.EMPTY_CHAR;
-//		}
-//
-//		return buffer.charAt(cols);
-//	}
+	/**
+	 * 是否为缓冲区的最后一个字符
+	 * @return
+	 */
+	private boolean isEnding() {
+//		System.out.println(cols + "ddf " + buffer.length());
+////		System.out.println(cols > buffer.length() - 1);
+		return cols >= buffer.length() - 1;
+	}
 	
 	/**
 	 * @Title: recogId
@@ -193,28 +206,49 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogId(char ch) {
-		String str = "";
-	
-		do {
-			str += String.valueOf(ch);
-			ch = getChar();
-		} while((isAlpha(ch)));
+//		String str = "";
+//	
+//		do {
+//			str += String.valueOf(ch);
+//			ch = getChar();
+//		} while((isAlpha(ch)));
+//		
+//		//列计数器回退一个
+////		cols--;
+//		
+//		int token = -1;
+//		if ((token = isKeyword(str)) > 0) {
+//			insToken(str, token);
+//			printInfo(str, "关键字", token);
+//		} 
+//		else {
+//			if ((token = isExistSym(str)) > 0) {
+//				printInfo(str, "标志符", token);	
+//			} else {
+//				insToken(str, token);
+//				printInfo(str, "标志符", insertSym(str, TokenGenerator.getLastToken()));
+//			}
+//		}
 		
-		//列计数器回退一个
-		cols--;
-		
-		int token = -1;
-		if ((token = isKeyword(str)) > 0) {
-			insToken(str, token);
-			printInfo(str, "关键字", token);
-		} 
-		else {
-			if ((token = isExistSym(str)) > 0) {
-				printInfo(str, "标志符", token);	
-			} else {
-				insToken(str, token);
-				printInfo(str, "标志符", insertSym(str, TokenGenerator.getLastToken()));
+		char state = '0';
+		while (state != 2) {
+			switch (state) {
+			case '0': 
+				if (isAlpha(ch)) {
+					state = '1';
+				} else {
+					error();
+				}
+			case '1': 
+				if (isAlnum() && i < 8) {
+					state = '1';
+				} else {
+					state = '2';
+					cols--; //退回当前读入的字符
+				}
 			}
+			
+			ch = buffer[clos++];
 		}
 	}
 	
@@ -366,7 +400,7 @@ public class Lexer {
 		}
 		
 		//列计数器回退一个
-		cols--;
+//		cols--;
 		
 		if (str.indexOf(".") > 0) {
 			printInfo(str, "小数", getToken(TokenGenerator.constant, "decimalType"));
@@ -402,13 +436,17 @@ public class Lexer {
 		//注释
 		if ((ch = getChar()) == '*') {
 			int length = str.length();
-			while (length >= 2 && str.substring(length - 2, length - 1) == "*/") {
+			while (str.substring(length - 2, length - 1) == "*/") {
 				str += String.valueOf(ch);
 				ch = getChar();
 			}
 			
-			int token = 0;
-			printInfo(str, "注释", token);
+			do {
+				str += String.valueOf(ch);
+				ch = getChar();
+			} while(ch != '*' && !isEnding());
+		
+			printInfo(str, "注释", -1);
 		} else {
 			//列计数器回退一个
 			cols--;
@@ -446,7 +484,7 @@ public class Lexer {
 	 * @throws
 	 */
 	private void printInfo(String name, String type, int token) {
-		System.out.println("{" + name +", " + type + ", " + token + "}");
+		System.out.println(name +"  " + type + "   " + token);
 	}
 	
 	/**
