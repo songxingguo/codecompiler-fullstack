@@ -28,7 +28,7 @@ import utils.Constant;
 public class Lexer {
 	
 	//缓冲区用于保存一行数据
-	private String buffer = null;
+	private char[] buffer = null;
 	//行计数器
 	private int lines = 0;
 	//列计数器
@@ -61,11 +61,12 @@ public class Lexer {
                 String str = null;
     			while ((str = bufferedReader.readLine()) != null) {
     				lines++;
-    				buffer = str;
+    				buffer = str.toCharArray();
     				cols = 0;
     	          
     		        while (!isEnding()) {
 //    		        	printPosition();
+    		        	printBuffer();
         	            //首字符决定单词的处理
     		        	sort(getChar());
     		        }
@@ -94,21 +95,23 @@ public class Lexer {
 		if (isAlpha(ch)) {
 			//识别标识符
 			recogId(ch);
-		} else if (isDigit(ch)) {
+		} 
+		else if (isDigit(ch)) {
 			//识别数
 			recogDig(ch);
-		} else if (ch == '/') {
-			//处理注释
-			handCom(ch);
-		} else if (isDelimeter(String.valueOf(ch))) {
-			//识别定界符
-			recogDel(ch);
-		} else if (ch == '\"') {
-			//识别字符常数
-			recogStr();
-		} else {
-			
-		}
+		} 
+//		else if (ch == '/') {
+//			//处理注释
+//			handCom(ch);
+//		} else if (isDelimeter(String.valueOf(ch))) {
+//			//识别定界符
+//			recogDel(ch);
+//		} else if (ch == '\"') {
+//			//识别字符常数
+//			recogStr(ch);
+//		} else {
+//			
+//		}
 	}
 	
 	/**
@@ -138,6 +141,15 @@ public class Lexer {
 	}
 	
 	/**
+	 * 判断是否为字母或者数字
+	 * @param ch
+	 * @return
+	 */
+	private boolean isAlnum(char ch) {
+		return isAlpha(ch) || isDigit(ch);
+	}
+	
+	/**
 	 * 
 	 * @Title: isDelimeter
 	 * @Description: 是否为定界符
@@ -155,6 +167,15 @@ public class Lexer {
 		return false;
 	}
 	
+	private boolean isSign(String str) {
+		for (String word : Constant.ARITHMETIC_OPERATOR) {
+			if (word == str) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * 
 	 * @Title: getChar
@@ -163,29 +184,12 @@ public class Lexer {
 	 * @return: boolean   
 	 * @throws
 	 */
-//	private char getChar() {
-//		char ch = Constant.EMPTY_CHAR;
-//		cols++;
-//		
-//		if (buffer.length() > 0) {
-//	    	ch = buffer.charAt(0);
-//	    	buffer = buffer.substring(1);
-//		} else {
-//			buffer = null;
-//		}
-//		
-//		return ch;
-//	}
-	
 	private char getChar() { 
 		if (isEnding()) {
 			return Constant.EMPTY_CHAR;
 		}
 		
-		char ch = buffer.charAt(cols);
-		cols++;
-		
-		return ch;
+		return buffer[cols++];
 	}
 	
 	/**
@@ -193,9 +197,7 @@ public class Lexer {
 	 * @return
 	 */
 	private boolean isEnding() {
-//		System.out.println(cols + "ddf " + buffer.length());
-////		System.out.println(cols > buffer.length() - 1);
-		return cols >= buffer.length() - 1;
+		return cols > buffer.length - 1;
 	}
 	
 	/**
@@ -205,42 +207,19 @@ public class Lexer {
 	 * @return: void   
 	 * @throws
 	 */
-	private void recogId(char ch) {
-//		String str = "";
-//	
-//		do {
-//			str += String.valueOf(ch);
-//			ch = getChar();
-//		} while((isAlpha(ch)));
-//		
-//		//列计数器回退一个
-////		cols--;
-//		
-//		int token = -1;
-//		if ((token = isKeyword(str)) > 0) {
-//			insToken(str, token);
-//			printInfo(str, "关键字", token);
-//		} 
-//		else {
-//			if ((token = isExistSym(str)) > 0) {
-//				printInfo(str, "标志符", token);	
-//			} else {
-//				insToken(str, token);
-//				printInfo(str, "标志符", insertSym(str, TokenGenerator.getLastToken()));
-//			}
-//		}
-		
+	private void recogId(char ch) {		
+		String str = "";
 		char state = '0';
-		while (state != 2) {
+		while (state != '2' && !isEnding()) {
 			switch (state) {
 			case '0': 
 				if (isAlpha(ch)) {
 					state = '1';
 				} else {
 					error();
-				}
+				} break;
 			case '1': 
-				if (isAlnum() && i < 8) {
+				if (isAlnum(ch)) {
 					state = '1';
 				} else {
 					state = '2';
@@ -248,8 +227,30 @@ public class Lexer {
 				}
 			}
 			
-			ch = buffer[clos++];
+			str += String.valueOf(ch);
+			ch = getChar();
 		}
+		
+		int token = -1;
+		if ((token = isKeyword(str)) > 0) {
+			insToken(str, token);
+			printInfo(str, "关键字", token);
+		} 
+		else {
+			if ((token = isExistSym(str)) > 0) {
+				printInfo(str, "标志符", token);	
+			} else {
+				insToken(str, token);
+				printInfo(str, "标志符", insertSym(str, TokenGenerator.getLastToken()));
+			}
+		}
+	}
+	
+	/**
+	 * 返回错误信息
+	 */
+	private void error() {
+		
 	}
 	
     /**
@@ -374,9 +375,9 @@ public class Lexer {
      * @return: int   
      * @throws
      */
-    private int getToken(List<Entry> entryList, String str) {
-		for (Entry e : entryList) {
-			if (e.getWord().equals(str)) {
+    private int getToken(List<Entry> list, String str) {
+		for (Entry e : list) {
+			if (str.trim().equals(e.getWord())) {
 				return  e.getToken();
 			}
 		}
@@ -392,15 +393,76 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogDig(char ch) {
+//		String str = "";
+//		
+//		while (isDigit(ch) || ch == '.' ||  ch == 69) {
+//			str += String.valueOf(ch);
+//			ch = getChar();
+//		}
+//		
+//		//列计数器回退一个
+////		cols--;
+//		
 		String str = "";
-		
-		while (isDigit(ch) || ch == '.' ||  ch == 69) {
+		char state = '0';
+		while (state != '7' && isEnding()) {
+			switch (state) {
+			case '0':
+				if (isDigit(ch)) {
+					state = '1';
+				} else {
+					error();
+				} break;
+			case '1': 
+				if (isDigit(ch)) {
+					state = '1';
+				} else if (ch == '.') {
+					state = '2';
+				} else if ((ch == 'e') || (ch == 'E')) {
+					state = '4';
+				} else {
+					cols--;
+				} break;
+			case '2':
+				if (isDigit(ch)) {
+					state = '3';
+				}  else {
+					error();
+				} break;
+			case '3': 
+				if (isDigit(ch)) {
+					state = '3';
+				} else if ((ch=='E') || (ch=='e')) {
+					state ='4';
+				} else {
+					cols--;
+				} break;
+			case '4':
+				if (isDigit(ch)) {
+					state = '6';
+				} else if(isSign(String.valueOf(ch))) {
+					state = '5';
+				} else {
+					error();
+				} break;
+			case '5': 
+				if (isDigit(ch)) {
+					state='6';
+			    } else {
+			    	error();
+			    } break;
+			case '6': 
+				if (isDigit(ch)) {
+					state = '6';
+				} else {
+					cols--;
+					state = '7';
+				} break;
+ 			} 
+			
 			str += String.valueOf(ch);
 			ch = getChar();
 		}
-		
-		//列计数器回退一个
-//		cols--;
 		
 		if (str.indexOf(".") > 0) {
 			printInfo(str, "小数", getToken(TokenGenerator.constant, "decimalType"));
@@ -418,9 +480,25 @@ public class Lexer {
 	 * @return: void   
 	 * @throws
 	 */
-	private static void recogStr() {
-		// TODO Auto-generated method stub
+	private void recogStr(char ch) {
+		String str = "";
+		char state='0'; /*初始状态*/
+		while (state!='2') { 
+			switch (state) {
+		    case '0': state='1'; break;
+		    case '1': 
+		    	if (ch =='\'') {
+		    		 
+		    	} else {
+		    	    state='1'; 
+		    	}
+		   }
+			
+		   ch = getChar();
+		   str += String.valueOf(ch);
+		}
 		
+		printInfo(str, "小数", getToken(TokenGenerator.constant, "decimalType"));
 	}
 
 	/**
@@ -431,28 +509,28 @@ public class Lexer {
 	 * @throws
 	 */
 	private void handCom(char ch) {
-		String str = "";
-		str += String.valueOf(ch);
-		//注释
-		if ((ch = getChar()) == '*') {
-			int length = str.length();
-			while (str.substring(length - 2, length - 1) == "*/") {
-				str += String.valueOf(ch);
-				ch = getChar();
-			}
-			
-			do {
-				str += String.valueOf(ch);
-				ch = getChar();
-			} while(ch != '*' && !isEnding());
-		
-			printInfo(str, "注释", -1);
-		} else {
-			//列计数器回退一个
-			cols--;
-			int token = 0;
-			printInfo(str, "/", token);
-		}
+//		String str = "";
+//		str += String.valueOf(ch);
+//		//注释
+//		if ((ch = getChar()) == '*') {
+//			int length = str.length();
+//			while (str.substring(length - 2, length - 1) == "*/") {
+//				str += String.valueOf(ch);
+//				ch = getChar();
+//			}
+//			
+//			do {
+//				str += String.valueOf(ch);
+//				ch = getChar();
+//			} while(ch != '*' && !isEnding());
+//		
+//			printInfo(str, "注释", -1);
+//		} else {
+//			//列计数器回退一个
+//			cols--;
+//			int token = 0;
+//			printInfo(str, "/", token);
+//		}
 	}
 
 	/**
@@ -497,6 +575,14 @@ public class Lexer {
 	 */
 	public void printPosition() {
 		System.out.println("(" + lines + ", " + cols + ")");
+	}
+	
+	
+	private void printBuffer() {
+		int count = 0;
+		for (char c : buffer) {
+			System.out.println(c + " " + count++);
+		}
 	}
 	
 	public static void main(String[] args) {
