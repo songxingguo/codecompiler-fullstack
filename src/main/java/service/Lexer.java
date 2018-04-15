@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import dao.Entry;
@@ -70,7 +71,7 @@ public class Lexer {
     				cols = 0;
     	          
     		        while (!isEnding()) {
-//    		        	printPosition();
+    		        	printPosition();
         	            //首字符决定单词的处理
     		        	sort(getChar());
     		        }
@@ -107,14 +108,16 @@ public class Lexer {
 		else if (ch == '/') {
 			//处理注释
 			handCom(ch);
-		} else if (isDelimeter(String.valueOf(ch))) {
+		} 
+		else if (isDelimeter(String.valueOf(ch))) {
 			//识别定界符
 			recogDel(ch);
-		} else if (ch == '\"') {
+		} 
+		else if (ch == '\'') {
 			//识别字符常数
 			recogStr(ch);
 		} else {
-			
+			error();
 		}
 	}
 	
@@ -163,8 +166,18 @@ public class Lexer {
 	 * @throws
 	 */
 	private boolean isDelimeter(String str) {
-		for (String word : Constant.LIMITERWORD) {
-			if (word == str) {
+		List list = new ArrayList(Arrays.asList(Constant.LIMITERWORD));
+        list.addAll(Arrays.asList(Constant.ARITHMETIC_OPERATOR));
+        list.addAll(Arrays.asList(Constant.RELATION_OPERATOR));
+        list.addAll(Arrays.asList(Constant.BITWISE_OPERATOR));
+        list.addAll(Arrays.asList(Constant.LOGICAL_OPERATOR));
+        list.addAll(Arrays.asList(Constant.ASSIGNMENT_OPERATOR));
+        list.addAll(Arrays.asList(Constant.CONDITIONAL_OPERATOR));
+        
+        Object[] c = list.toArray();
+        
+		for (Object word : c) {
+			if (word.equals(str)) {
 				return true;
 			}
 		}
@@ -250,7 +263,7 @@ public class Lexer {
 	 * 返回错误信息
 	 */
 	private void error() {
-		
+		System.out.println("出错");
 	}
 	
     /**
@@ -316,7 +329,7 @@ public class Lexer {
 		for (Symbol sym : symbols) {
 			FileOutputStream fos;
 			try {
-				fos = new FileOutputStream(new File(fileName), true);
+				fos = new FileOutputStream(new File(fileName));
 				PrintStream out = new PrintStream(fos);
 				String str = "" + sym.getName().getWord() + "   " + sym.getToken() + "\r\n";
 				out.print(str);
@@ -354,7 +367,7 @@ public class Lexer {
 		for (Token token : tokens) {
 			FileOutputStream fos;
 			try {
-				fos = new FileOutputStream(new File(fileName), true);
+				fos = new FileOutputStream(new File(fileName));
 				PrintStream out = new PrintStream(fos);
 				String str = "" + token.getWord() + "   " + token.getToken() + "\r\n";
 				out.print(str);
@@ -478,7 +491,7 @@ public class Lexer {
 		    case '0': state='1'; break;
 		    case '1': 
 		    	if (ch =='\'') {
-		    		 
+		    		 state = '2';
 		    	} else {
 		    	    state='1'; 
 		    	}
@@ -544,14 +557,17 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogDel(char ch) {
-		String str = "";
-		str += String.valueOf(ch);
-		str += String.valueOf(getChar());
+		String str = String.valueOf(ch);
+
+		if (!isEnding()) {
+			str += String.valueOf(getChar());
+		}
+		
 		if (isDelimeter(str)) {
 			printInfo(str, "双界符", getToken(TokenGenerator.limiterword, str));
 		} else {
 			cols--;
-			printInfo(str, "界符", getToken(TokenGenerator.limiterword, str));
+			printInfo(String.valueOf(ch), "界符", getToken(TokenGenerator.limiterword, String.valueOf(ch)));
 		}
 	}
 	

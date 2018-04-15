@@ -23,7 +23,7 @@ public class Constant {
 //  public static final String LIMITERWORD = ",.;()";
   
   public static String[] LIMITERWORD = //分界符  
-  {",", ".", ";", "(", ")", "'", "\"", "", "//", "/*", "*/"}; 
+  {",", ".", ";", "(", ")", "'", "\"", "", "//", "/*", "*/", "{", "}"}; 
   
   public static final String[] KEYWORDS = //关键字  
   {"abstract", "boolean", "break", "byte","case", "catch", "char", 
