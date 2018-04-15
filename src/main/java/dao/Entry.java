@@ -1,11 +1,5 @@
-package lexicalanalysis;
-/**  
-* @Title: Entry.java
-* @Package 
-* @Description: TODO
-* @author songxingguo
-* @date 2018年4月12日 下午3:22:59
-*/
+package dao;
+
 
 /**
  * <p>Title: </p>
@@ -18,7 +12,7 @@ public class Entry {
 	
 	private int token;
 	
-	Entry(String word, int token) {
+	public Entry(String word, int token) {
 		this.word = word;
 		this.token = token;
 	}

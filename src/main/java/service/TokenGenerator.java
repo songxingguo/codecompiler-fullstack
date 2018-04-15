@@ -1,3 +1,4 @@
+package service;
 /**  
 * @Title: TokenGenerator.java
 * @Package lexicalanalysis
@@ -5,11 +6,12 @@
 * @author songxingguo
 * @date 2018年4月12日 下午3:34:16
 */
-package lexicalanalysis;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
+import dao.Entry;
 import utils.Constant;
 
 /**

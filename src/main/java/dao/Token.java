@@ -1,3 +1,4 @@
+package dao;
 /**  
 * @Title: Token.java
 * @Package lexicalanalysis
@@ -5,7 +6,7 @@
 * @author songxingguo
 * @date 2018年4月7日 下午5:01:44
 */
-package lexicalanalysis;
+
 
 /**
  * <p>Title: </p>

@@ -1,3 +1,4 @@
+package service;
 /**  
 * @Title: ExicalAnalysis.java
 * @Package lexicalanalysis
@@ -5,7 +6,7 @@
 * @author songxingguo
 * @date 2018年4月7日 下午9:19:58
 */
-package lexicalanalysis;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +18,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import dao.Entry;
+import dao.Symbol;
+import dao.Token;
 import utils.Constant;
 
 /**
@@ -25,6 +29,7 @@ import utils.Constant;
  * @author songxinggo
  * @date 2018.04.07
  */
+
 public class Lexer {
 	
 	//缓冲区用于保存一行数据
@@ -52,7 +57,7 @@ public class Lexer {
 	public void scanner() {
 		try {
             String encoding = "UTF-8";
-            File file = new File("testData.txt");
+            File file = new File("Lexer.java");
             if (file.isFile() && file.exists()) { // 判断文件是否存在
                 InputStreamReader read = new InputStreamReader(
                         new FileInputStream(file), encoding);// 考虑到编码格式
@@ -66,7 +71,6 @@ public class Lexer {
     	          
     		        while (!isEnding()) {
 //    		        	printPosition();
-//    		        	printBuffer();
         	            //首字符决定单词的处理
     		        	sort(getChar());
     		        }
@@ -307,7 +311,7 @@ public class Lexer {
      * @return: void   
      * @throws
      */
-    private void writeSym() {
+    public void writeSym() {
 		String fileName = "symbolTable.txt";
 		for (Symbol sym : symbols) {
 			FileOutputStream fos;
@@ -345,7 +349,7 @@ public class Lexer {
      * @return: int   
      * @throws
      */
-    private void writeToken() {
+    public void writeToken() {
 		String fileName = "tokenTable.txt";
 		for (Token token : tokens) {
 			FileOutputStream fos;
@@ -495,28 +499,41 @@ public class Lexer {
 	 * @throws
 	 */
 	private void handCom(char ch) {
-		String str = "";
-		str += String.valueOf(ch);
-		//注释
-		if ((ch = getChar()) == '*') {
-			int length = str.length();
-			while (str.substring(length - 2, length - 1) == "*/") {
-				str += String.valueOf(ch);
-				ch = getChar();
+		String str = String.valueOf(ch);
+		char state = '0';
+		
+		while (!isEnding() && state != '5') {
+			switch (state) {
+			case '0': state = '1'; break;
+			case '1': 
+				if (ch == '/') {
+					state = '2';
+				} else if(ch == '*') {
+					state = '3';
+				} else {
+					state = '5';
+					cols--;
+				} break;
+			case '2': state = '2'; break;
+			case '3':
+				if (ch == '*') {
+					state = '4';
+				} else {
+					state = '3';
+				} break;
+			case '4':
+				if (ch == '/') {
+					state = '5';
+				} else {
+					state = '3';
+				} break;
 			}
 			
-			do {
-				str += String.valueOf(ch);
-				ch = getChar();
-			} while(ch != '*' && !isEnding());
-		
-			printInfo(str, "注释", -1);
-		} else {
-			//列计数器回退一个
-			cols--;
-			int token = 0;
-			printInfo(str, "/", token);
+			ch = getChar();
+			str += String.valueOf(ch);
 		}
+		
+		printInfo(str, "注释", -1);
 	}
 
 	/**
@@ -561,14 +578,6 @@ public class Lexer {
 	 */
 	public void printPosition() {
 		System.out.println("(" + lines + ", " + cols + ")");
-	}
-	
-	
-	private void printBuffer() {
-		int count = 0;
-		for (char c : buffer) {
-			System.out.println(c + " " + count++);
-		}
 	}
 	
 	public static void main(String[] args) {

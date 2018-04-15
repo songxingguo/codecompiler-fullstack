@@ -1,4 +1,3 @@
-char sonxinggo sd 
-12.3
-"dfd"
-'dfddsdsd'
+//dfdf
+/******************
+****/

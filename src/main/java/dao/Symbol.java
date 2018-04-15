@@ -1,3 +1,4 @@
+package dao;
 /**  
 * @Title: SymbolTable.java
 * @Package lexicalanalysis
@@ -5,7 +6,7 @@
 * @author songxingguo
 * @date 2018年4月7日 下午5:12:37
 */
-package lexicalanalysis;
+
 
 /**
  * <p>Title: </p>
@@ -15,7 +16,7 @@ package lexicalanalysis;
  */
 public class Symbol {
 
-	private Name name = new Name();
+	public Name name = new Name();
 	
 	private int token;
 	
@@ -80,7 +81,7 @@ public class Symbol {
 		this.addr = addr;
 	}
 	
-	class Name {
+	public class Name {
 		private String word;
 		
 		private int length;

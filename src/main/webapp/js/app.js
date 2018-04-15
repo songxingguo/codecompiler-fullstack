@@ -13,6 +13,9 @@ requirejs.config({
 		],
 		'file': [
 			'app/file'
+		],
+		'api': [
+			'app/api'
 		]
 	},
 	shim: {
@@ -21,8 +24,10 @@ requirejs.config({
 	}
 });
 
-require(['jquery','bootsrtap', 'file'], 
-		function($, bootsrtap, file){
-	console.log("dfdsfd");
+require(['jquery','bootsrtap', 'file', 'api'], 
+		function($, bootsrtap, file, api){
+	$("#save").click(function() {
+		api.getUser();
+	});
 	window.file = file;
 });
