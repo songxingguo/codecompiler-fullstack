@@ -66,7 +66,7 @@ public class Lexer {
     	          
     		        while (!isEnding()) {
 //    		        	printPosition();
-    		        	printBuffer();
+//    		        	printBuffer();
         	            //首字符决定单词的处理
     		        	sort(getChar());
     		        }
@@ -100,18 +100,18 @@ public class Lexer {
 			//识别数
 			recogDig(ch);
 		} 
-//		else if (ch == '/') {
-//			//处理注释
-//			handCom(ch);
-//		} else if (isDelimeter(String.valueOf(ch))) {
-//			//识别定界符
-//			recogDel(ch);
-//		} else if (ch == '\"') {
-//			//识别字符常数
-//			recogStr(ch);
-//		} else {
-//			
-//		}
+		else if (ch == '/') {
+			//处理注释
+			handCom(ch);
+		} else if (isDelimeter(String.valueOf(ch))) {
+			//识别定界符
+			recogDel(ch);
+		} else if (ch == '\"') {
+			//识别字符常数
+			recogStr(ch);
+		} else {
+			
+		}
 	}
 	
 	/**
@@ -185,10 +185,6 @@ public class Lexer {
 	 * @throws
 	 */
 	private char getChar() { 
-		if (isEnding()) {
-			return Constant.EMPTY_CHAR;
-		}
-		
 		return buffer[cols++];
 	}
 	
@@ -208,9 +204,9 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogId(char ch) {		
-		String str = "";
+		String str = String.valueOf(ch);
 		char state = '0';
-		while (state != '2' && !isEnding()) {
+		while (!isEnding() && state != '2') {
 			switch (state) {
 			case '0': 
 				if (isAlpha(ch)) {
@@ -227,8 +223,8 @@ public class Lexer {
 				}
 			}
 			
-			str += String.valueOf(ch);
 			ch = getChar();
+			str += String.valueOf(ch);
 		}
 		
 		int token = -1;
@@ -393,19 +389,9 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogDig(char ch) {
-//		String str = "";
-//		
-//		while (isDigit(ch) || ch == '.' ||  ch == 69) {
-//			str += String.valueOf(ch);
-//			ch = getChar();
-//		}
-//		
-//		//列计数器回退一个
-////		cols--;
-//		
-		String str = "";
+		String str = String.valueOf(ch);
 		char state = '0';
-		while (state != '7' && isEnding()) {
+		while (!isEnding() && state != '7') {
 			switch (state) {
 			case '0':
 				if (isDigit(ch)) {
@@ -460,8 +446,8 @@ public class Lexer {
 				} break;
  			} 
 			
-			str += String.valueOf(ch);
 			ch = getChar();
+			str += String.valueOf(ch);
 		}
 		
 		if (str.indexOf(".") > 0) {
@@ -481,9 +467,9 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogStr(char ch) {
-		String str = "";
+		String str = String.valueOf(ch);
 		char state='0'; /*初始状态*/
-		while (state!='2') { 
+		while (!isEnding() && state!='2') { 
 			switch (state) {
 		    case '0': state='1'; break;
 		    case '1': 
@@ -498,7 +484,7 @@ public class Lexer {
 		   str += String.valueOf(ch);
 		}
 		
-		printInfo(str, "小数", getToken(TokenGenerator.constant, "decimalType"));
+		printInfo(str, "字符常数", getToken(TokenGenerator.constant, "decimalType"));
 	}
 
 	/**
@@ -509,28 +495,28 @@ public class Lexer {
 	 * @throws
 	 */
 	private void handCom(char ch) {
-//		String str = "";
-//		str += String.valueOf(ch);
-//		//注释
-//		if ((ch = getChar()) == '*') {
-//			int length = str.length();
-//			while (str.substring(length - 2, length - 1) == "*/") {
-//				str += String.valueOf(ch);
-//				ch = getChar();
-//			}
-//			
-//			do {
-//				str += String.valueOf(ch);
-//				ch = getChar();
-//			} while(ch != '*' && !isEnding());
-//		
-//			printInfo(str, "注释", -1);
-//		} else {
-//			//列计数器回退一个
-//			cols--;
-//			int token = 0;
-//			printInfo(str, "/", token);
-//		}
+		String str = "";
+		str += String.valueOf(ch);
+		//注释
+		if ((ch = getChar()) == '*') {
+			int length = str.length();
+			while (str.substring(length - 2, length - 1) == "*/") {
+				str += String.valueOf(ch);
+				ch = getChar();
+			}
+			
+			do {
+				str += String.valueOf(ch);
+				ch = getChar();
+			} while(ch != '*' && !isEnding());
+		
+			printInfo(str, "注释", -1);
+		} else {
+			//列计数器回退一个
+			cols--;
+			int token = 0;
+			printInfo(str, "/", token);
+		}
 	}
 
 	/**
