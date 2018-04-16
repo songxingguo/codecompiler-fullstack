@@ -35,6 +35,7 @@ public class Lexer {
 	
 	//缓冲区用于保存一行数据
 	private char[] buffer = null;
+	private String strBuffer = null;
 	//行计数器
 	private int lines = 0;
 	//列计数器
@@ -64,10 +65,9 @@ public class Lexer {
                         new FileInputStream(file), encoding);// 考虑到编码格式
                 BufferedReader bufferedReader = new BufferedReader(read);
          
-                String str = null;
-    			while ((str = bufferedReader.readLine()) != null) {
+    			while ((strBuffer = bufferedReader.readLine()) != null) {
     				lines++;
-    				buffer = str.toCharArray();
+    				buffer = strBuffer.toCharArray();
     				cols = 0;
     	          
     		        while (!isEnding()) {
@@ -221,9 +221,8 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogId(char ch) {		
-		String str = String.valueOf(ch);
 		char state = '0';
-//		int initCol = cols;
+		int start = cols - 1;
 		outterLoop:
 		while (!isEnding() && state != '2') {
 			switch (state) {
@@ -244,9 +243,9 @@ public class Lexer {
 			}
 			
 			ch = getChar();
-			str += String.valueOf(ch);
 		}
 		
+		String str = getStr(start, cols);
 		int token = -1;
 		if ((token = isKeyword(str)) > 0) {
 			insToken(str, token);
@@ -410,7 +409,7 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogDig(char ch) {
-		String str = String.valueOf(ch);
+		int start = cols - 1;
 		char state = '0';
 		
 		outterLoop: 
@@ -475,9 +474,9 @@ public class Lexer {
  			} 
 			
 			ch = getChar();
-			str += String.valueOf(ch);
 		}
 		
+		String str = getStr(start, cols);
 		if (str.indexOf(".") > 0) {
 			printInfo(str, "小数", getToken(TokenGenerator.constant, "decimalType"));
 		} else if (str.indexOf("E") > 0){
@@ -495,7 +494,7 @@ public class Lexer {
 	 * @throws
 	 */
 	private void recogStr(char ch) {
-		String str = String.valueOf(ch);
+		int start = cols -1;
 		char state='0'; /*初始状态*/
 		while (!isEnding() && state!='2') { 
 			switch (state) {
@@ -509,9 +508,9 @@ public class Lexer {
 		   }
 			
 		   ch = getChar();
-		   str += String.valueOf(ch);
 		}
 		
+		String str = getStr(start, cols);
 		printInfo(str, "字符常数", getToken(TokenGenerator.constant, "decimalType"));
 	}
 
@@ -523,7 +522,7 @@ public class Lexer {
 	 * @throws
 	 */
 	private void handCom(char ch) {
-		String str = String.valueOf(ch);
+		int start = cols - 1;
 		char state = '0';
 		
 		outterLoop:
@@ -557,9 +556,9 @@ public class Lexer {
 			}
 			
 			ch = getChar();
-			str += String.valueOf(ch);
 		}
 		
+		String str = getStr(start, cols);
 		printInfo(str, "注释", -1);
 	}
 
@@ -585,22 +584,6 @@ public class Lexer {
 		} else {
 			printInfo(String.valueOf(ch), "界符", getToken(TokenGenerator.limiterword, String.valueOf(ch)));
 		}
-//		
-//		if (isDelimeter(str)) {
-//			printInfo(str, "双界符", getToken(TokenGenerator.limiterword, str));
-//		} else {
-//			cols--;
-//			printInfo(String.valueOf(ch), "界符", getToken(TokenGenerator.limiterword, String.valueOf(ch)));
-//		}
-		
-		
-//		char state = '0';
-//		switch (state) {
-//			case '0': if(isDelimeter(str)) {
-//				state = '1'; break;
-//			}
-//		
-//		}
 	}
 	
 	/**
@@ -626,6 +609,16 @@ public class Lexer {
 	 */
 	public void printPosition() {
 		System.out.println("(" + lines + ", " + cols + ")");
+	}
+	
+	/**
+	 * 活动字符串
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	private String getStr(int start, int end) {
+		return strBuffer.substring(start, end);
 	}
 	
 	public static void main(String[] args) {
