@@ -1,1 +1,10 @@
-;;;
+public class TestData() {
+	private int var = 0;
+	private int double = 12.23;
+	private String str = "Hello word！";
+	private char ch = '0';
+	
+	public void testDate() {
+	   system.out.println("Hello Lexer!");
+	}
+}

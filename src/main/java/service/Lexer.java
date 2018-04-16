@@ -58,7 +58,7 @@ public class Lexer {
 	public void scanner() {
 		try {
             String encoding = "UTF-8";
-            File file = new File("Lexer.java");
+            File file = new File("testData.txt");
             if (file.isFile() && file.exists()) { // 判断文件是否存在
                 InputStreamReader read = new InputStreamReader(
                         new FileInputStream(file), encoding);// 考虑到编码格式
@@ -71,7 +71,7 @@ public class Lexer {
     				cols = 0;
     	          
     		        while (!isEnding()) {
-    		        	printPosition();
+//    		        	printPosition();
         	            //首字符决定单词的处理
     		        	sort(getChar());
     		        }
@@ -223,6 +223,8 @@ public class Lexer {
 	private void recogId(char ch) {		
 		String str = String.valueOf(ch);
 		char state = '0';
+//		int initCol = cols;
+		outterLoop:
 		while (!isEnding() && state != '2') {
 			switch (state) {
 			case '0': 
@@ -237,7 +239,8 @@ public class Lexer {
 				} else {
 					state = '2';
 					cols--; //退回当前读入的字符
-				}
+					break outterLoop;
+				} break;
 			}
 			
 			ch = getChar();
@@ -263,7 +266,8 @@ public class Lexer {
 	 * 返回错误信息
 	 */
 	private void error() {
-		System.out.println("出错");
+		System.out.print("出错 at");
+		printPosition();
 	}
 	
     /**
@@ -408,6 +412,8 @@ public class Lexer {
 	private void recogDig(char ch) {
 		String str = String.valueOf(ch);
 		char state = '0';
+		
+		outterLoop: 
 		while (!isEnding() && state != '7') {
 			switch (state) {
 			case '0':
@@ -424,7 +430,9 @@ public class Lexer {
 				} else if ((ch == 'e') || (ch == 'E')) {
 					state = '4';
 				} else {
-					cols--;
+					cols--; 
+					state = '7';
+					break outterLoop;
 				} break;
 			case '2':
 				if (isDigit(ch)) {
@@ -439,6 +447,8 @@ public class Lexer {
 					state ='4';
 				} else {
 					cols--;
+					state = '7';
+					break outterLoop;
 				} break;
 			case '4':
 				if (isDigit(ch)) {
@@ -460,6 +470,7 @@ public class Lexer {
 				} else {
 					cols--;
 					state = '7';
+					break outterLoop;
 				} break;
  			} 
 			
@@ -491,10 +502,10 @@ public class Lexer {
 		    case '0': state='1'; break;
 		    case '1': 
 		    	if (ch =='\'') {
-		    		 state = '2';
+		    		state = '2';
 		    	} else {
 		    	    state='1'; 
-		    	}
+		    	} break;
 		   }
 			
 		   ch = getChar();
@@ -515,6 +526,7 @@ public class Lexer {
 		String str = String.valueOf(ch);
 		char state = '0';
 		
+		outterLoop:
 		while (!isEnding() && state != '5') {
 			switch (state) {
 			case '0': state = '1'; break;
@@ -526,6 +538,7 @@ public class Lexer {
 				} else {
 					state = '5';
 					cols--;
+					break outterLoop;
 				} break;
 			case '2': state = '2'; break;
 			case '3':
@@ -537,6 +550,7 @@ public class Lexer {
 			case '4':
 				if (ch == '/') {
 					state = '5';
+					break outterLoop;
 				} else {
 					state = '3';
 				} break;
@@ -561,14 +575,32 @@ public class Lexer {
 
 		if (!isEnding()) {
 			str += String.valueOf(getChar());
-		}
-		
-		if (isDelimeter(str)) {
-			printInfo(str, "双界符", getToken(TokenGenerator.limiterword, str));
+			
+			if (isDelimeter(str)) {
+				printInfo(str, "双界符", getToken(TokenGenerator.limiterword, str));
+			} else {
+				cols--;
+				printInfo(String.valueOf(ch), "界符", getToken(TokenGenerator.limiterword, String.valueOf(ch)));
+			}
 		} else {
-			cols--;
 			printInfo(String.valueOf(ch), "界符", getToken(TokenGenerator.limiterword, String.valueOf(ch)));
 		}
+//		
+//		if (isDelimeter(str)) {
+//			printInfo(str, "双界符", getToken(TokenGenerator.limiterword, str));
+//		} else {
+//			cols--;
+//			printInfo(String.valueOf(ch), "界符", getToken(TokenGenerator.limiterword, String.valueOf(ch)));
+//		}
+		
+		
+//		char state = '0';
+//		switch (state) {
+//			case '0': if(isDelimeter(str)) {
+//				state = '1'; break;
+//			}
+//		
+//		}
 	}
 	
 	/**

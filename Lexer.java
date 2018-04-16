@@ -15,6 +15,6 @@ public class Lexer {
 	private int lines = 0;
 	//列计数器
 	private int cols = 0; 
-//	
-//	private char ch = 'df';
+	
+	private char ch = 'df';
 }
