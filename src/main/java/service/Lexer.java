@@ -68,12 +68,12 @@ public class Lexer {
     			while ((strBuffer = bufferedReader.readLine()) != null) {
     				lines++;
     				buffer = strBuffer.toCharArray();
+    	
     				cols = 0;
-    	          
-    		        while (!isEnding()) {
-//    		        	printPosition();
+    				char ch = ' ';
+    		        while (!isEnding() && !isSpace(ch = getChar())) {
         	            //首字符决定单词的处理
-    		        	sort(getChar());
+    		        	sort(ch);
     		        }
     			}
                 bufferedReader.close();
@@ -116,8 +116,11 @@ public class Lexer {
 		else if (ch == '\'') {
 			//识别字符常数
 			recogStr(ch);
-		} else {
-			error();
+		} else if (isSpace(ch)) {
+			System.out.println("空格" + ch + "空格");
+		}
+		else {
+			error("出现不识别的字符", ch);
 		}
 	}
 	
@@ -214,6 +217,15 @@ public class Lexer {
 	}
 	
 	/**
+	 * 是否为空格
+	 * @param ch
+	 * @return
+	 */
+	private boolean isSpace(char ch) {
+		return ch == ' ';
+	}
+	
+	/**
 	 * @Title: recogId
 	 * @Description: 识别标识符
 	 * @param: 
@@ -224,13 +236,13 @@ public class Lexer {
 		char state = '0';
 		int start = cols - 1;
 		outterLoop:
-		while (!isEnding() && state != '2') {
+		while (!isEnding() && !isSpace(ch) && state != '2') {
 			switch (state) {
 			case '0': 
 				if (isAlpha(ch)) {
 					state = '1';
 				} else {
-					error();
+					error("标识符错误", ch);
 				} break;
 			case '1': 
 				if (isAlnum(ch)) {
@@ -264,8 +276,8 @@ public class Lexer {
 	/**
 	 * 返回错误信息
 	 */
-	private void error() {
-		System.out.print("出错 at");
+	private void error(String type, char value) {
+		System.out.print(value + type + " at: ");
 		printPosition();
 	}
 	
@@ -413,13 +425,13 @@ public class Lexer {
 		char state = '0';
 		
 		outterLoop: 
-		while (!isEnding() && state != '7') {
+		while (!isEnding() && !isSpace(ch) && state != '7') {
 			switch (state) {
 			case '0':
 				if (isDigit(ch)) {
 					state = '1';
 				} else {
-					error();
+					error("识别数出错1", ch);
 				} break;
 			case '1': 
 				if (isDigit(ch)) {
@@ -437,7 +449,7 @@ public class Lexer {
 				if (isDigit(ch)) {
 					state = '3';
 				}  else {
-					error();
+					error("识别数出错2", ch);
 				} break;
 			case '3': 
 				if (isDigit(ch)) {
@@ -455,13 +467,13 @@ public class Lexer {
 				} else if(isSign(String.valueOf(ch))) {
 					state = '5';
 				} else {
-					error();
+					error("识别数出错3", ch);
 				} break;
 			case '5': 
 				if (isDigit(ch)) {
 					state='6';
 			    } else {
-			    	error();
+			    	error("识别数出错4", ch);
 			    } break;
 			case '6': 
 				if (isDigit(ch)) {
@@ -496,7 +508,7 @@ public class Lexer {
 	private void recogStr(char ch) {
 		int start = cols -1;
 		char state='0'; /*初始状态*/
-		while (!isEnding() && state!='2') { 
+		while (!isEnding() && !isSpace(ch) && state!='2') { 
 			switch (state) {
 		    case '0': state='1'; break;
 		    case '1': 
@@ -526,7 +538,7 @@ public class Lexer {
 		char state = '0';
 		
 		outterLoop:
-		while (!isEnding() && state != '5') {
+		while (!isEnding() && !isSpace(ch) && state != '5') {
 			switch (state) {
 			case '0': state = '1'; break;
 			case '1': 

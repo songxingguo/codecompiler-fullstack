@@ -5,6 +5,6 @@ public class TestData() {
 	private char ch = '0';
 	
 	public void testDate() {
-	   system.out.println("Hello Lexer!");
+	   system.out.println("Hello ");
 	}
 }
