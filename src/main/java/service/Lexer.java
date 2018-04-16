@@ -23,6 +23,7 @@ import dao.Entry;
 import dao.Symbol;
 import dao.Token;
 import utils.Constant;
+import utils.FileUtils;
 
 /**
  * <p>Title: </p>
@@ -116,11 +117,9 @@ public class Lexer {
 		else if (ch == '\'') {
 			//识别字符常数
 			recogStr(ch);
-		} else if (isSpace(ch)) {
-			System.out.println("空格" + ch + "空格");
 		}
 		else {
-			error("出现不识别的字符", ch);
+//			error("出现不识别的字符", ch);
 		}
 	}
 	
@@ -328,6 +327,7 @@ public class Lexer {
     private int insertSym(String word, int token) {
     	Symbol symbol = new Symbol(word, token);
     	symbols.add(symbol);
+//    	System.out.println(symbol.toString());
     	return symbol.getToken();
     }
     
@@ -342,16 +342,8 @@ public class Lexer {
     public void writeSym() {
 		String fileName = "symbolTable.txt";
 		for (Symbol sym : symbols) {
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(new File(fileName));
-				PrintStream out = new PrintStream(fos);
-				String str = "" + sym.getName().getWord() + "   " + sym.getToken() + "\r\n";
-				out.print(str);
-				out.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			String str = "" + sym.getName().getWord() + "   " + sym.getToken() + "\r\n";
+			FileUtils.writeToFile(fileName, str);
 		}
     }
     
@@ -367,6 +359,7 @@ public class Lexer {
     private void insToken(String word, int token) {
     	Token to = new Token(word, token);
     	tokens.add(to);
+//    	System.out.println(to.toString());
     }
     
     /**
@@ -380,16 +373,8 @@ public class Lexer {
     public void writeToken() {
 		String fileName = "tokenTable.txt";
 		for (Token token : tokens) {
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(new File(fileName));
-				PrintStream out = new PrintStream(fos);
-				String str = "" + token.getWord() + "   " + token.getToken() + "\r\n";
-				out.print(str);
-				out.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			String str = "" + token.getWord() + "   " + token.getToken() + "\r\n";
+			FileUtils.writeToFile(fileName, str);
 		}
     }
     

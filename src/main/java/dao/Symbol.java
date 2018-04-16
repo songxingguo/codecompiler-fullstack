@@ -81,6 +81,11 @@ public class Symbol {
 		this.addr = addr;
 	}
 	
+	@Override
+	public String toString() {
+		return "Symbol [name=" + name + ", token=" + token + ", val=" + val + "]";
+	}
+
 	public class Name {
 		private String word;
 		

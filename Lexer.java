@@ -6,7 +6,6 @@ import java.util.Map;
 
 import utils.FileUtils;
 
-
 public class Lexer {
 	
 	//缓冲区用于保存一行数据

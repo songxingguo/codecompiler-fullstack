@@ -39,4 +39,9 @@ public class Token {
 	public void setToken(int token) {
 		this.token = token;
 	}
+
+	@Override
+	public String toString() {
+		return "Token [word=" + word + ", token=" + token + "]";
+	}
 }
