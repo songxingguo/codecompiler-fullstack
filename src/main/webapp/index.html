@@ -26,7 +26,7 @@
 				          <a class="dropdown-item" href="#">
 				           	<div class="open-file"> 
 				           	    打开
-				           		<input type="file" onchange="file.readFiles(this.files)" />
+				           		<input type="file" onchange="file.readFiles(this.files)" id="file"/>
 				           	</div>
 				          </a>
 				          <a class="dropdown-item" href="#" id="save">保存</a>
@@ -41,7 +41,7 @@
 				        </a>
 				        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 				          <a class="dropdown-item" href="#">手工生成过程演示</a>
-				          <a class="dropdown-item" href="#">自动生成算法演示</a>
+				          <a class="dropdown-item" href="#" id="autoShow">自动生成算法演示</a>
 				        </div>
 				      </li>
 				      <li class="nav-item">
@@ -72,30 +72,102 @@
 				    </div>
 				    <div class="col">
 						<div class="card border-success mb-3" style="max-width: 35rem; height: 25rem">
-						  <div class="card-header">中间代码</div>
+						  <div class="card-header">符号表</div>
 						  <div class="card-body text-success">
-						    <h5 class="card-title">Success card title</h5>
-						    <p class="card-text overflow-y" class="result"></p>
+						    <h5 class="card-title">用于展示词法分析出来的所有单词的token值</h5>
+						    <!--<p class="card-text overflow-y" id="symbol">-->
+
+						    <!--</p>-->
+						    <div class="table-responsive mt30" id="symbol">
+						    	<table class="table table-hover">
+								  <thead>
+								    <tr>
+								      <th scope="col">序号</th>
+								      <th scope="col">单词</th>
+								      <th scope="col">token</th>
+								      <th scope="col">长度</th>
+									  <th scope="col">值</th>
+								    </tr>
+								  </thead>
+								  <tbody>
+
+								  </tbody>
+								</table>
+								</div>
 						  </div>
 						</div>
 				    </div>
 				  </div>
 				  <div class="row">
 				    <div class="col">
-						<div class="card border-danger mb-3" style="max-width: 35rem; height: 25rem">
-						  <div class="card-header">目标代码</div>
-						  <div class="card-body text-danger">
-						    <h5 class="card-title">Danger card title</h5>
-						    <p class="card-text overflow-y" >Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						<div class="card border-success mb-3" style="max-width: 35rem; height: 25rem">
+						  <div class="card-header">token字表</div>
+						  <div class="card-body text-success">
+						    <h5 class="card-title">用于展示词法分析出来的所有单词的token值</h5>
+						    <!--<p class="card-text overflow-y" id="token"></p>-->
+							  <div class="table-responsive mt30" id="token">
+								  <table class="table table-hover">
+									  <thead>
+									  <tr>
+										  <th scope="col">序号</th>
+										  <th scope="col">单词</th>
+										  <th scope="col">token</th>
+									  </tr>
+									  </thead>
+									  <tbody>
+									  <tr>
+										  <th scope="row">1</th>
+										  <td>Mark</td>
+										  <td>Otto</td>
+									  </tr>
+									  <tr>
+										  <th scope="row">2</th>
+										  <td>Jacob</td>
+										  <td>Thornton</td>
+									  </tr>
+									  <tr>
+										  <th scope="row">3</th>
+										  <td colspan="2">Larry the Bird</td>
+									  </tr>
+									  </tbody>
+								  </table>
+							  </div>
 						  </div>
 						</div>
 				    </div>
 				    <div class="col">
 						<div class="card border-warning mb-3" style="max-width: 35rem; height: 25rem">
-						  <div class="card-header">代码</div>
+						  <div class="card-header">错误</div>
 						  <div class="card-body text-warning">
-						    <h5 class="card-title">Warning card title</h5>
-						    <p class="card-text overflow-y">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+						    <h5 class="card-title">用于展示词法分析的错误信息</h5>
+						    <!--<p class="card-text overflow-y" id="error"></p>-->
+							  <div class="table-responsive mt30" id="error">
+								  <table class="table table-hover">
+									  <thead>
+									  <tr>
+										  <th scope="col">序号</th>
+										  <th scope="col">错误类型</th>
+										  <th scope="col">位置</th>
+									  </tr>
+									  </thead>
+									  <tbody>
+									  <tr>
+										  <th scope="row">1</th>
+										  <td>Mark</td>
+										  <td>Otto</td>
+									  </tr>
+									  <tr>
+										  <th scope="row">2</th>
+										  <td>Jacob</td>
+										  <td>Thornton</td>
+									  </tr>
+									  <tr>
+										  <th scope="row">3</th>
+										  <td colspan="3">Larry the Bird</td>
+									  </tr>
+									  </tbody>
+								  </table>
+							  </div>
 						  </div>
 						</div>
 				    </div>

@@ -8,7 +8,7 @@ define(['jquery'], function($) {
 	                  reader.onload = function() {
 	                      $('#source-code').append('<pre>' + this.result + '</pre>');
 	                 }
-	                 reader.readAsText(file, 'gb2312');
+	                 reader.readAsText(file, 'utf-8');
 	             } else if(/image+/.test(file.type)) {//判断文件是不是imgage类型
                 reader.onload = function() {
 	                    $('#source-code').append('<img src="' + this.result + '"/>');

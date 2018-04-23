@@ -29,5 +29,9 @@ require(['jquery','bootsrtap', 'file', 'api'],
 	$("#save").click(function() {
 		api.getUser();
 	});
+	
+	$("#autoShow").click(function() {
+		api.lexicalAnalysis();
+	});
 	window.file = file;
 });

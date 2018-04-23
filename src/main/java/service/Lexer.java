@@ -43,7 +43,7 @@ public class Lexer {
 	private int cols = 0; 
 	
 	//标识符
-    public static List<Symbol> symbols = new ArrayList<Symbol>();
+    public List<Symbol> symbols = new ArrayList<Symbol>();
     
     public List<Token> tokens = new ArrayList<Token>();
     
@@ -77,6 +77,12 @@ public class Lexer {
     		        	sort(ch);
     		        }
     			}
+    			
+    			//向文件中写入符号表
+    			writeSym();
+    			//向文件中写入token表
+    			writeToken();
+    			
                 bufferedReader.close();
                 read.close();
             } 
@@ -119,7 +125,7 @@ public class Lexer {
 			recogStr(ch);
 		}
 		else {
-//			error("出现不识别的字符", ch);
+			error("出现不识别的字符", ch);
 		}
 	}
 	
@@ -618,10 +624,16 @@ public class Lexer {
 		return strBuffer.substring(start, end);
 	}
 	
+	public List<Symbol> getSymbols() {
+		return symbols;
+	}
+
+	public List<Token> getTokens() {
+		return tokens;
+	}
+
 	public static void main(String[] args) {
 		Lexer lexer = new Lexer();
 		lexer.scanner();
-		lexer.writeSym();
-		lexer.writeToken();
 	}
 }
